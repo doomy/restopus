@@ -1,0 +1,9 @@
+{
+	"name": "doomy/restopus",
+	"type": "library",
+	"autoload": {
+		"psr-4": {
+			"Doomy\\Restopus\\": "src/"
+		}
+	}
+}
