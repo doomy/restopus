@@ -5,5 +5,8 @@
 		"psr-4": {
 			"Doomy\\Restopus\\": "src/"
 		}
+	},
+	"require-dev": {
+		"symplify/easy-coding-standard": "^12.3"
 	}
 }

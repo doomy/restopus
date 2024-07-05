@@ -31,5 +31,4 @@ final readonly class RequestMethodMapper
                 throw new \InvalidArgumentException("Unknown HTTP method: $method");
         }
     }
-
 }
