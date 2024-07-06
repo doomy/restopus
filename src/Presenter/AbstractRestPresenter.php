@@ -42,11 +42,15 @@ abstract class AbstractRestPresenter implements IPresenter
     }
 
     /**
-     * @param class-string $bodyEntityClass
+     * @template T of AbstractRequestEntity
+     * @param class-string<T> $bodyEntityClass
+     * @return T
      */
     protected function getBody(Request $request, string $bodyEntityClass): AbstractRequestEntity
     {
-        return $this->requestBodyProvider->getBodyEntity($request->getPost(), $bodyEntityClass);
+        /** @var T $bodyEntity */
+        $bodyEntity = $this->requestBodyProvider->getBodyEntity($request->getPost(), $bodyEntityClass);
+        return $bodyEntity;
     }
 
     private function checkHttpMethodConsistency(ReflectionMethod $reflectionMethod, Request $request): void
