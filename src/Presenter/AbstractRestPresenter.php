@@ -11,6 +11,7 @@ use Nette\Application\IPresenter;
 use Nette\Application\Request;
 use Nette\Application\Response;
 use Nette\DI\Attributes\Inject;
+use Nette\Http\IRequest as HttpRequest;
 use ReflectionMethod;
 
 abstract class AbstractRestPresenter implements IPresenter
@@ -23,16 +24,34 @@ abstract class AbstractRestPresenter implements IPresenter
     #[Inject]
     public RequestBodyProvider $requestBodyProvider;
 
+    #[Inject]
+    public HttpRequest $httpRequest;
+
     public function run(Request $request): Response
     {
+        $rawBody = $this->httpRequest->getRawBody();
+
+        if ($rawBody === null) {
+            throw new ForbiddenException('Request body is missing');
+        }
+
+        $bodyDecoded = json_decode($rawBody, true);
+        if (! is_array($bodyDecoded)) {
+            throw new ForbiddenException('Invalid request body');
+        }
+
         $action = $request->getParameter(self::PARAM_ACTION);
         if (! is_string($action)) {
             throw new ForbiddenException();
         }
         $methodReflection = $this->getMethodReflection($action);
 
-        $this->checkHttpMethodConsistency($methodReflection, $request);
-        $response = $methodReflection->invoke($this, $request);
+        $this->requestValidator->validateRequest(
+            actionMethodReflection: $methodReflection,
+            request: $request,
+            requestBody: $bodyDecoded
+        );
+        $response = $methodReflection->invoke($this, $bodyDecoded);
 
         if (! $response instanceof Response) {
             throw new RuntimeException('Invalid response type');
@@ -43,26 +62,15 @@ abstract class AbstractRestPresenter implements IPresenter
 
     /**
      * @template T of AbstractRequestEntity
+     * @param array<string, string> $requestBodyData
      * @param class-string<T> $bodyEntityClass
      * @return T
      */
-    protected function getBody(Request $request, string $bodyEntityClass): AbstractRequestEntity
+    protected function getBody(array $requestBodyData, string $bodyEntityClass): AbstractRequestEntity
     {
         /** @var T $bodyEntity */
-        $bodyEntity = $this->requestBodyProvider->getBodyEntity($request->getPost(), $bodyEntityClass);
+        $bodyEntity = $this->requestBodyProvider->getBodyEntity($requestBodyData, $bodyEntityClass);
         return $bodyEntity;
-    }
-
-    private function checkHttpMethodConsistency(ReflectionMethod $reflectionMethod, Request $request): void
-    {
-        if ($request->getMethod() === null) {
-            throw new ForbiddenException();
-        }
-
-        $this->requestValidator->validateRequest(
-            actionMethodReflection: $reflectionMethod,
-            request: $request
-        );
     }
 
     private function getMethodReflection(string $action): ReflectionMethod

@@ -19,10 +19,12 @@ final readonly class RequestValidator
 
    /**
     * @throws ForbiddenException
+    * @param array<string, string> $requestBody
     */
    public function validateRequest(
        \ReflectionMethod $actionMethodReflection,
-       Request $request
+       Request $request,
+       array $requestBody
    ): void
     {
         $annotations = $actionMethodReflection->getAttributes();
@@ -33,7 +35,7 @@ final readonly class RequestValidator
                 $this->checkHttpMethodConsistency($anotationInstance->getHttpRequestMethod(), $request);
             } elseif ($anotationInstance instanceof RequestBody) {
                 /** performs validation while creating object */
-                $this->requestBodyProvider->getBodyEntity($request->getPost(), $anotationInstance->getBodyEntityClass());
+                $this->requestBodyProvider->getBodyEntity($requestBody, $anotationInstance->getBodyEntityClass());
             }
         }
     }

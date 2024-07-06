@@ -11,19 +11,11 @@ final class RequestBodyProvider
 
     /**
      * @param class-string $requestBodyClass
+     * @param array<string, string> $requestBody
      * @throws \InvalidArgumentException
      */
-    public function getBodyEntity(mixed $requestBody, string $requestBodyClass): AbstractRequestEntity
+    public function getBodyEntity(array $requestBody, string $requestBodyClass): AbstractRequestEntity
     {
-        if (! is_array($requestBody)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Request body should be an array, %s given',
-                    gettype($requestBody)
-                )
-            );
-        }
-
         if (isset($this->cached[$requestBodyClass])) {
             return $this->cached[$requestBodyClass];
         }
