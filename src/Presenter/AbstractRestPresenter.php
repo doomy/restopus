@@ -2,7 +2,8 @@
 
 namespace Doomy\Restopus\Presenter;
 
-use Doomy\Restopus\Request\RequestMethodMapper;
+use Doomy\Restopus\Request\AbstractRequestEntity;
+use Doomy\Restopus\Request\RequestBodyProvider;
 use Doomy\Restopus\Request\RequestValidator;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use http\Exception\RuntimeException;
@@ -17,10 +18,10 @@ abstract class AbstractRestPresenter implements IPresenter
     final const string PARAM_ACTION = 'action';
 
     #[Inject]
-    public RequestMethodMapper $requestMethodMapper;
+    public RequestValidator $requestValidator;
 
     #[Inject]
-    public RequestValidator $requestValidator;
+    public RequestBodyProvider $requestBodyProvider;
 
     public function run(Request $request): Response
     {
@@ -40,15 +41,23 @@ abstract class AbstractRestPresenter implements IPresenter
         return $response;
     }
 
+    /**
+     * @param class-string $bodyEntityClass
+     */
+    protected function getBody(Request $request, string $bodyEntityClass): AbstractRequestEntity
+    {
+        return $this->requestBodyProvider->getBodyEntity($request->getPost(), $bodyEntityClass);
+    }
+
     private function checkHttpMethodConsistency(ReflectionMethod $reflectionMethod, Request $request): void
     {
         if ($request->getMethod() === null) {
             throw new ForbiddenException();
         }
 
-        $this->requestValidator->checkHttpMethodConsistency(
+        $this->requestValidator->validateRequest(
             actionMethodReflection: $reflectionMethod,
-            requestMethod: $this->requestMethodMapper->mapFromString($request->getMethod())
+            request: $request
         );
     }
 
