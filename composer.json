@@ -11,7 +11,7 @@
 		"phpstan/phpstan": "^1.11"
 	},
 	"scripts": {
-		"check": "vendor/bin/phpstan analyse src --level 9 && vendor/bin/ecs --fix"
+		"check": "clear && vendor/bin/phpstan analyse src --level 9 && vendor/bin/ecs --fix"
 	},
 	"require": {
 		"nette/application": "^3.2",
