@@ -32,9 +32,8 @@ final class RequestBodyProvider
             if (! array_key_exists($propertyName, $requestBody)) {
                 throw new \InvalidArgumentException(
                     sprintf(
-                        'Property %s in request body %s is required',
-                        $reflectionProperty->getName(),
-                        $requestBodyClass
+                        'Property %s in request body is required',
+                        $reflectionProperty->getName()
                     )
                 );
             }

@@ -63,6 +63,16 @@ abstract class AbstractRestPresenter implements IPresenter
             return new JsonResponse([
                 'message' => $exception->getMessage(),
             ]);
+        } catch (\InvalidArgumentException $exception) {
+            $this->httpResponse->setCode(400);
+            return new JsonResponse([
+                'message' => $exception->getMessage(),
+            ]);
+        } catch (\Throwable $exception) {
+            $this->httpResponse->setCode(500);
+            return new JsonResponse([
+                'message' => $exception->getMessage(),
+            ]);
         }
         if (! $response instanceof Response) {
             throw new RuntimeException('Invalid response type');
