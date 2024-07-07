@@ -64,6 +64,16 @@ final class RequestBodyProvider
             }
 
             $bodyEntity->{$propertyName} = $propertyValue;
+            unset($requestBody[$propertyName]);
+        }
+
+        if (count($requestBody) > 0) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Unexpected property: %s',
+                    array_keys($requestBody)[0]
+                )
+            );
         }
 
         $this->cached[$requestBodyClass] = $bodyEntity;
