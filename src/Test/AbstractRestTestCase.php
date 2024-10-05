@@ -2,13 +2,13 @@
 
 namespace Doomy\Restopus\Test;
 
+use Doomy\Testing\AbstractDbAwareTestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
-abstract class AbstractRestTestCase extends TestCase
+abstract class AbstractRestTestCase extends AbstractDbAwareTestCase
 {
     protected const string ENDPOINT_URL = '';
 
