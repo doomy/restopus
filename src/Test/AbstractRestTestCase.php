@@ -44,7 +44,11 @@ abstract class AbstractRestTestCase extends AbstractDbAwareTestCase
             return $this->client->send($request);
         } catch (RequestException $e) {
             if ($e->hasResponse() && $e->getResponse() !== null) {
-                return $e->getResponse();
+                $response = $e->getResponse();
+                if ($response->getStatusCode() === 500) {
+                    var_dump((string)$response->getBody());
+                }
+                return $response;
             }
 
             throw $e;
