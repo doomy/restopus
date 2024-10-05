@@ -75,7 +75,7 @@ abstract class AbstractRestPresenter implements IPresenter
             ]);
         }
         if (! $response instanceof Response) {
-            throw new RuntimeException('Invalid response type');
+            throw new \RuntimeException('Invalid response type');
         }
 
         return $response;
