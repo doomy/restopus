@@ -36,6 +36,7 @@ abstract class AbstractRestTestCase extends AbstractDbAwareTestCase
             static::ENDPOINT_URL,
             [
                 'Content-Type' => 'application/json',
+                'Tests' => '1'
             ],
             $dataEncoded
         );
