@@ -6,7 +6,6 @@ use Doomy\Restopus\Request\AbstractRequestEntity;
 use Doomy\Restopus\Request\RequestBodyProvider;
 use Doomy\Restopus\Request\RequestValidator;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
-use http\Exception\RuntimeException;
 use Nette\Application\IPresenter;
 use Nette\Application\Request;
 use Nette\Application\Response;
