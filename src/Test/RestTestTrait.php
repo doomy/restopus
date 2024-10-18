@@ -11,20 +11,25 @@ trait RestTestTrait
 {
     private Client $client;
 
-    private function sendPost(string $endpointUrl, array $data): ResponseInterface
+    private function sendPost(string $endpointUrl, array $data, ?string $accessToken = null): ResponseInterface
     {
         $dataEncoded = json_encode($data);
         if ($dataEncoded === false) {
             throw new \RuntimeException('Failed to encode data to JSON');
         }
 
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Tests' => '1',
+        ];
+        if ($accessToken !== null) {
+            $headers['Authorization'] = "Bearer " . $accessToken;
+        }
+
         $request = new Request(
             'POST',
             $endpointUrl,
-            [
-                'Content-Type' => 'application/json',
-                'Tests' => '1',
-            ],
+            $headers,
             $dataEncoded
         );
 

@@ -18,6 +18,7 @@
 	},
 	"require": {
 		"nette/application": "^3.2",
-		"nette/di": "^3.2"
+		"nette/di": "^3.2",
+		"doomy/security": "^5.2"
 	}
 }
