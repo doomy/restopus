@@ -50,8 +50,10 @@ final class RequestBodyProvider
                 );
             }
 
-            $propertyValue = $requestBody[$propertyName];
-            if (gettype($propertyValue) !== $propertyType->getName()) {
+            $propertyValue = $this->translatePropertyValue($requestBody[$propertyName], $propertyType->getName());
+            $propertyTypeName = $propertyType->getName();
+            if (gettype($propertyValue) instanceof $propertyTypeName) {
+                var_dump($propertyValue);
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Property %s in request body %s should be of type %s, %s given',
@@ -78,5 +80,13 @@ final class RequestBodyProvider
 
         $this->cached[$requestBodyClass] = $bodyEntity;
         return $bodyEntity;
+    }
+
+    private function translatePropertyValue(mixed $propertyValue, string $propertyType): mixed {
+        if ($propertyType !== 'DateTimeInterface' || ! is_array($propertyValue)) {
+            return $propertyValue;
+        }
+
+        return new \DateTimeImmutable($propertyValue['date'], new \DateTimeZone($propertyValue['timezone']));
     }
 }
