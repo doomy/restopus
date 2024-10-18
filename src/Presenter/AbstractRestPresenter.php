@@ -53,7 +53,8 @@ abstract class AbstractRestPresenter implements IPresenter
             $this->requestValidator->validateRequest(
                 actionMethodReflection: $methodReflection,
                 request: $request,
-                requestBody: $bodyDecoded
+                requestBody: $bodyDecoded,
+                headers: $this->httpRequest->getHeaders()
             );
 
             $response = $methodReflection->invoke($this, $bodyDecoded);
