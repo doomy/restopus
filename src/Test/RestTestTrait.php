@@ -2,6 +2,7 @@
 
 namespace Doomy\Restopus\Test;
 
+use Doomy\Restopus\Request\Enum\HttpRequestMethod;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
@@ -12,6 +13,16 @@ trait RestTestTrait
     private Client $client;
 
     private function sendPost(string $endpointUrl, array $data, ?string $accessToken = null): ResponseInterface
+    {
+        return $this->sendRequest($endpointUrl, $data, HttpRequestMethod::POST, $accessToken);
+    }
+
+    private function sendGet(string $endpointUrl, ?string $accessToken = null): ResponseInterface
+    {
+        return $this->sendRequest($endpointUrl, [], HttpRequestMethod::GET, $accessToken);
+    }
+
+    private function sendRequest(string $endpointUrl, array $data, HttpRequestMethod $httpRequestMethod, ?string $accessToken = null): ResponseInterface
     {
         $dataEncoded = json_encode($data);
         if ($dataEncoded === false) {
@@ -27,7 +38,7 @@ trait RestTestTrait
         }
 
         $request = new Request(
-            'POST',
+            $httpRequestMethod->value,
             $endpointUrl,
             $headers,
             $dataEncoded
