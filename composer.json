@@ -3,8 +3,18 @@
 	"type": "library",
 	"autoload": {
 		"psr-4": {
-			"Doomy\\Restopus\\": "src/"
+			"Doomy\\Restopus\\": "src/",
+			"Doomy\\Restopus\\tests\\": "tests/"
 		}
+	},
+	"scripts": {
+		"tests": "vendor/bin/phpunit tests --colors=always",
+		"check": ["clear && vendor/bin/phpstan analyse src --level 9 && vendor/bin/ecs --fix", "@tests"]
+	},
+	"require": {
+		"nette/application": "^3.2",
+		"nette/di": "^3.2",
+		"doomy/security": "^5.2|^6.0.0"
 	},
 	"require-dev": {
 		"symplify/easy-coding-standard": "^12.3",
@@ -12,13 +22,5 @@
 		"phpunit/phpunit": "^11.2",
 		"guzzlehttp/guzzle": "^7.8",
 		"doomy/testing": "^2.1.1"
-	},
-	"scripts": {
-		"check": "clear && vendor/bin/phpstan analyse src --level 9 && vendor/bin/ecs --fix"
-	},
-	"require": {
-		"nette/application": "^3.2",
-		"nette/di": "^3.2",
-		"doomy/security": "^5.2|^6.0.0"
 	}
 }
