@@ -2,9 +2,12 @@
 
 namespace Doomy\Restopus\Presenter;
 
+use Doomy\Repository\Model\Entity;
 use Doomy\Restopus\Request\AbstractRequestEntity;
 use Doomy\Restopus\Request\RequestBodyProvider;
 use Doomy\Restopus\Request\RequestValidator;
+use Doomy\Restopus\Response\AbstractResponseEntity;
+use Doomy\Restopus\Response\Service\EntityViewReponseMapper;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use Nette\Application\IPresenter;
 use Nette\Application\Request;
@@ -30,6 +33,9 @@ abstract class AbstractRestPresenter implements IPresenter
 
     #[Inject]
     public IResponse $httpResponse;
+
+    #[Inject]
+    public EntityViewReponseMapper $entityViewReponseMapper;
 
     public function run(Request $request): Response
     {
@@ -92,6 +98,27 @@ abstract class AbstractRestPresenter implements IPresenter
         /** @var T $bodyEntity */
         $bodyEntity = $this->requestBodyProvider->getBodyEntity($requestBodyData, $bodyEntityClass);
         return $bodyEntity;
+    }
+
+    /**
+     * @param class-string<AbstractResponseEntity> $viewClass
+     * @param Entity[] $entities
+     * @return array<array<string, mixed>>
+     */
+    protected function mapEntitiesToResponse(array $entities, string $viewClass): array {
+        return array_map(
+            fn (Entity $entity) => $this->mapEntityToResponse($entity, $viewClass),
+            $entities
+        );
+    }
+
+    /**
+     * @param class-string<AbstractResponseEntity> $viewClass
+     * @return array<string, mixed>
+     */
+    protected function mapEntityToResponse(Entity $entity, string $viewClass): array
+    {
+        return $this->entityViewReponseMapper->mapEntityToResponse($entity, $viewClass);
     }
 
     private function getMethodReflection(string $action): ReflectionMethod
