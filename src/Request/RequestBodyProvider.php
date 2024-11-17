@@ -52,8 +52,15 @@ final class RequestBodyProvider
 
             $propertyValue = $this->translatePropertyValue($requestBody[$propertyName], $propertyType->getName());
             $propertyTypeName = $propertyType->getName();
-            if (gettype($propertyValue) instanceof $propertyTypeName) {
-                var_dump($propertyValue);
+
+            $this->checkTypeConsistency(
+                gettype($propertyValue),
+                $propertyTypeName,
+                $reflectionProperty,
+                $requestBodyClass
+            );
+/*
+            if (gettype($propertyValue) !== $this->translateType($propertyTypeName)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Property %s in request body %s should be of type %s, %s given',
@@ -64,7 +71,7 @@ final class RequestBodyProvider
                     )
                 );
             }
-
+*/
             $bodyEntity->{$propertyName} = $propertyValue;
             unset($requestBody[$propertyName]);
         }
@@ -88,5 +95,42 @@ final class RequestBodyProvider
         }
 
         return new \DateTimeImmutable($propertyValue['date'], new \DateTimeZone($propertyValue['timezone']));
+    }
+
+    /**
+     * @param class-string $requestBodyClass
+     * @throws \InvalidArgumentException
+     */
+    private function checkTypeConsistency(
+        string $valueType,
+        string $reflectionPropertyType,
+        \ReflectionProperty $reflectionProperty,
+        string $requestBodyClass,
+    ): void {
+        if ($valueType === "object" && $reflectionPropertyType === "DateTimeInterface") {
+            return;
+        }
+
+        if ($valueType === $this->translateType($reflectionPropertyType)) {
+            return;
+        }
+
+        throw new \InvalidArgumentException(
+            sprintf(
+                'Property %s in request body %s should be of type %s, %s given',
+                $reflectionProperty->getName(),
+                $requestBodyClass,
+                $reflectionPropertyType,
+                $valueType
+            )
+        );
+    }
+
+    private function translateType(string $typeAlias): string {
+        return match ($typeAlias) {
+            'int' => 'integer',
+            'bool' => 'boolean',
+            default => $typeAlias,
+        };
     }
 }
