@@ -42,6 +42,20 @@ final class RequestBodyProviderTest extends TestCase
         self::assertEquals('2021-01-01', $requestBody->dateTime->format('Y-m-d'));
     }
 
+    public function testStringDatetime(): void
+    {
+        $requestBodyProvider = new RequestBodyProvider();
+        $requestBody = $requestBodyProvider->getBodyEntity([
+            'id' => 1,
+            'dateTime' => '2222-02-22T12:22'
+        ], TestRequestBody::class);
+
+        self::assertInstanceOf(TestRequestBody::class, $requestBody);
+        self::assertSame(1, $requestBody->id);
+        self::assertInstanceOf(\DateTimeImmutable::class, $requestBody->dateTime);
+        self::assertEquals('2222-02-22T12:22', $requestBody->dateTime->format('Y-m-d\TH:i'));
+    }
+
     public function testInvalidCompositeDatetime(): void
     {
         $this->expectException(\DateMalformedStringException::class);
