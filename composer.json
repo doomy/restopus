@@ -12,17 +12,18 @@
 		"check": ["clear && vendor/bin/phpstan analyse src --level 9 && vendor/bin/ecs --fix", "@tests"]
 	},
 	"require": {
-		"nette/application": "^3.2",
 		"nette/di": "^3.2",
 		"doomy/security": "^7.0.0",
 		"doomy/ormtopus": "^5.1",
-		"doomy/repository": "^8"
+		"doomy/repository": "^8",
+		"nette/bootstrap": "^3.2"
 	},
 	"require-dev": {
 		"symplify/easy-coding-standard": "^12.3",
 		"phpstan/phpstan": "^1.11",
 		"phpunit/phpunit": "^11.2",
 		"guzzlehttp/guzzle": "^7.8",
-		"doomy/testing": "^2.1.1"
+		"doomy/testing": "^2.1.1",
+		"nette/application": "^3.2"
 	}
 }

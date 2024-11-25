@@ -1,0 +1,17 @@
+services:
+  restopus-webtests:
+    image: caddy:latest
+    ports:
+      - "8964:80"
+    volumes:
+      - ./:/srv
+      - ./Caddyfile.tests:/etc/caddy/Caddyfile
+    depends_on:
+      - restopus-phptests
+
+  restopus-phptests:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/PHP.Dockerfile
+    volumes:
+      - ./:/srv

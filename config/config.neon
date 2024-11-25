@@ -1,0 +1,16 @@
+application:
+    mapping:
+        *: Doomy\Restopus\tests\Support\Presenter\*Presenter
+
+services:
+    routerFactory: Doomy\Restopus\Routing\RestRouterFactory(
+        restPresenterNamespace: Doomy\Restopus\tests\Support\Presenter,
+        presentersDir: %rootDir%/tests/Support/Presenter
+    )
+    router:
+        factory: @routerFactory::createRouter()
+    - Doomy\Restopus\Response\Service\EntityViewReponseMapper
+    - Doomy\Restopus\Request\RequestBodyProvider
+    - Doomy\Restopus\Request\RequestValidator
+    - Doomy\Restopus\Request\RequestMethodMapper
+    - Doomy\Security\Authenticator\DummyAuthenticator
