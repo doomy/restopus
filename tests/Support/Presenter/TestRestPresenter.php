@@ -13,7 +13,7 @@ class TestRestPresenter extends \Doomy\Restopus\Presenter\AbstractRestPresenter
 {
     #[HttpMethod(HttpRequestMethod::GET)]
     #[Route('/list')]
-    public function list(): Response
+    public function actionList(): Response
     {
         $entities = [
             new \Doomy\Restopus\tests\Support\Entity\DummyEntity('name1', 'description1'),
