@@ -22,7 +22,13 @@ trait RestTestTrait
         return $this->sendRequest($endpointUrl, [], HttpRequestMethod::GET, $accessToken);
     }
 
-    private function sendRequest(string $endpointUrl, array $data, HttpRequestMethod $httpRequestMethod, ?string $accessToken = null): ResponseInterface
+    private function sendRequest(
+        string $endpointUrl,
+        array $data,
+        HttpRequestMethod $httpRequestMethod,
+        ?string $accessToken = null,
+        array $customHeaders = []
+    ): ResponseInterface
     {
         $dataEncoded = json_encode($data);
         if ($dataEncoded === false) {
@@ -36,6 +42,8 @@ trait RestTestTrait
         if ($accessToken !== null) {
             $headers['Authorization'] = "Bearer " . $accessToken;
         }
+
+        $headers = array_merge($headers, $customHeaders);
 
         $request = new Request(
             $httpRequestMethod->value,
