@@ -2,6 +2,7 @@
 
 namespace Doomy\Restopus\tests\Support\Presenter;
 
+use Doomy\Restopus\Request\Attribute\Authenticated;
 use Doomy\Restopus\Request\Attribute\HttpMethod;
 use Doomy\Restopus\Request\Attribute\Route;
 use Doomy\Restopus\Request\Enum\HttpRequestMethod;
@@ -20,6 +21,14 @@ class TestRestPresenter extends \Doomy\Restopus\Presenter\AbstractRestPresenter
             new \Doomy\Restopus\tests\Support\Entity\DummyEntity('name2', 'description2'),
         ];
         return new JsonResponse(['data' => $this->mapEntitiesToResponse($entities, DummyEntityView::class)]);
+    }
+
+    #[Authenticated]
+    #[HttpMethod(HttpRequestMethod::GET)]
+    #[Route('/authenticated')]
+    public function actionAuthenticated(): Response
+    {
+        return new JsonResponse(['data' => 'authenticated']);
     }
 
     #[Route('POST', '/update')]

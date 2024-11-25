@@ -13,7 +13,7 @@
 	},
 	"require": {
 		"nette/di": "^3.2",
-		"doomy/security": "^7.0.0",
+		"doomy/security": "^8",
 		"doomy/ormtopus": "^5.1",
 		"doomy/repository": "^8",
 		"nette/bootstrap": "^3.2"

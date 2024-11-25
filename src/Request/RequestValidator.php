@@ -8,7 +8,6 @@ use Doomy\Restopus\Request\Attribute\RequestBody;
 use Doomy\Restopus\Request\Enum\HttpRequestMethod;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use Doomy\Security\Authenticator\AuthenticatorInterface;
-use Doomy\Security\Authenticator\JwtAuthenticator;
 use Doomy\Security\Exception\InvalidTokenException;
 use Doomy\Security\Exception\TokenExpiredException;
 use Doomy\Security\Exception\UserBlockedException;
@@ -74,10 +73,6 @@ final readonly class RequestValidator
      */
     private function authenticateRequest(array $headers, Authenticated $attribute): void
     {
-        if (! $this->authenticator instanceof JwtAuthenticator) {
-            return;
-        }
-
         $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
         if ($authHeader === null || ! str_starts_with((string) $authHeader, 'Bearer ')) {
             throw new ForbiddenException('Missing or invalid Authorization header');
