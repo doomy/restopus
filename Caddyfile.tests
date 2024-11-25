@@ -1,0 +1,9 @@
+:80 {
+    root * /srv/www
+    php_fastcgi restopus-phptests:9000
+    file_server
+    log {
+        output stdout
+        format console
+    }
+}
