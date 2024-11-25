@@ -15,7 +15,7 @@ final class AbstractRestPresenterTest extends TestCase
         $responseMapper = new EntityViewReponseMapper();
         $presenter = new TestRestPresenter();
         $presenter->entityViewReponseMapper = $responseMapper;
-        $response = $presenter->list();
+        $response = $presenter->actionList();
         self::assertInstanceOf(JsonResponse::class, $response);
         $data = $response->getPayload();
         Assert::assertSame([
