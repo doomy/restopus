@@ -8,7 +8,7 @@
 		}
 	},
 	"scripts": {
-		"tests": "vendor/bin/phpunit tests --colors=always",
+		"tests": "docker-compose exec restopus-phptests vendor/bin/phpunit tests --colors=always",
 		"check": ["clear && vendor/bin/phpstan analyse src --level 9 && vendor/bin/ecs --fix", "@tests"]
 	},
 	"require": {
