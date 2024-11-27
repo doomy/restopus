@@ -21,13 +21,13 @@ final class RestPresenterTest extends TestCase
     public function testAuthenticatedInvalid(): void
     {
         $response = $this->sendGet(endpointUrl: self::API_URL . '/authenticated', accessToken: 'invalid');
-        self::assertSame(403, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testAuthenticatedExpired(): void
     {
         $response = $this->sendGet(endpointUrl: self::API_URL . '/authenticated', accessToken: 'expired');
-        self::assertSame(403, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testAuthenticatedValid(): void

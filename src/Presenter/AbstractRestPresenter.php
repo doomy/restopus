@@ -9,6 +9,7 @@ use Doomy\Restopus\Request\RequestValidator;
 use Doomy\Restopus\Response\AbstractResponseEntity;
 use Doomy\Restopus\Response\Service\EntityViewReponseMapper;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
+use Doomy\Security\Exception\AuthenticationFailedException;
 use Nette\Application\IPresenter;
 use Nette\Application\Request;
 use Nette\Application\Response;
@@ -64,6 +65,11 @@ abstract class AbstractRestPresenter implements IPresenter
             );
 
             $response = $methodReflection->invoke($this, $bodyDecoded);
+        } catch (AuthenticationFailedException $exception) {
+            $this->httpResponse->setCode(401);
+            return new JsonResponse([
+                'message' => $exception->getMessage(),
+            ]);
         } catch (ForbiddenException $exception) {
             $this->httpResponse->setCode(403);
             return new JsonResponse([
