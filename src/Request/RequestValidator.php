@@ -8,6 +8,7 @@ use Doomy\Restopus\Request\Attribute\RequestBody;
 use Doomy\Restopus\Request\Enum\HttpRequestMethod;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use Doomy\Security\Authenticator\AuthenticatorInterface;
+use Doomy\Security\Exception\AuthenticationFailedException;
 use Doomy\Security\Exception\InvalidTokenException;
 use Doomy\Security\Exception\TokenExpiredException;
 use Doomy\Security\Exception\UserBlockedException;
@@ -26,6 +27,7 @@ final readonly class RequestValidator
 
    /**
     * @throws ForbiddenException
+    * @throws AuthenticationFailedException
     * @param array<string, string> $requestBody
     * @param array<string, int|string> $headers
     */
@@ -70,6 +72,7 @@ final readonly class RequestValidator
     /**
      * @param array<string, int|string> $headers
      * @throws ForbiddenException
+     * @throws AuthenticationFailedException
      */
     private function authenticateRequest(array $headers, Authenticated $attribute): void
     {
@@ -81,7 +84,10 @@ final readonly class RequestValidator
         $accessToken = substr($authHeader, 7);
         try {
             $this->authenticator->authenticate($accessToken, $attribute->getUserEntityClass());
-        } catch (TokenExpiredException|InvalidTokenException|UserNotFoundException|UserBlockedException $exception) {
+        } catch (TokenExpiredException|InvalidTokenException $exception) {
+            throw new AuthenticationFailedException();
+        }
+        catch (UserNotFoundException|UserBlockedException $exception) {
             throw new ForbiddenException();
         }
     }
