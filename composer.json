@@ -23,7 +23,7 @@
 		"phpstan/phpstan": "^1.11",
 		"phpunit/phpunit": "^11.2",
 		"guzzlehttp/guzzle": "^7.8",
-		"doomy/testing": "^2.1.1",
+		"doomy/testing": "^2.6",
 		"nette/application": "^3.2"
 	}
 }
