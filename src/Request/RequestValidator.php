@@ -34,7 +34,7 @@ final readonly class RequestValidator
    public function validateRequest(
        \ReflectionMethod $actionMethodReflection,
        Request $request,
-       array $requestBody,
+       array|null $requestBody,
        array $headers
    ): void
     {
@@ -46,11 +46,31 @@ final readonly class RequestValidator
                 $this->checkHttpMethodConsistency($anotationInstance->getHttpRequestMethod(), $request);
             } elseif ($anotationInstance instanceof RequestBody) {
                 /** performs validation while creating object */
+                if (! is_array($requestBody)) {
+                    throw new ForbiddenException('Body cannot be empty');
+                }
                 $this->requestBodyProvider->getBodyEntity($requestBody, $anotationInstance->getBodyEntityClass());
             } elseif ($anotationInstance instanceof Authenticated) {
                 $this->authenticateRequest($headers, $anotationInstance);
             }
         }
+    }
+
+    /**
+     * @return array<string, string>|null
+     * @throws ForbiddenException
+     */
+    public function decodeBody(?string $rawBody): ?array
+    {
+        if ($rawBody === null || $rawBody === '') {
+            return null;
+        }
+        $bodyDecoded = json_decode($rawBody, true);
+        if (! is_array($bodyDecoded)) {
+            throw new ForbiddenException('Invalid request body');
+        }
+
+        return $bodyDecoded;
     }
 
     private function checkHttpMethodConsistency(

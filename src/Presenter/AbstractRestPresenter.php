@@ -40,16 +40,8 @@ abstract class AbstractRestPresenter implements IPresenter
 
     public function run(Request $request): Response
     {
-        $rawBody = $this->httpRequest->getRawBody();
         try {
-            if ($rawBody === null) {
-                throw new ForbiddenException('Request body is missing');
-            }
-
-            $bodyDecoded = json_decode($rawBody, true);
-            if (! is_array($bodyDecoded)) {
-                throw new ForbiddenException('Invalid request body');
-            }
+            $bodyDecoded = $this->requestValidator->decodeBody($this->httpRequest->getRawBody());
 
             $action = $request->getParameter(self::PARAM_ACTION);
             if (! is_string($action)) {
@@ -64,7 +56,7 @@ abstract class AbstractRestPresenter implements IPresenter
                 headers: $this->httpRequest->getHeaders()
             );
 
-            $response = $methodReflection->invoke($this, $bodyDecoded);
+            $response = $methodReflection->invoke($this, $bodyDecoded ?? []);
         } catch (AuthenticationFailedException $exception) {
             $this->httpResponse->setCode(401);
             return new JsonResponse([

@@ -19,18 +19,18 @@ trait RestTestTrait
 
     private function sendGet(string $endpointUrl, ?string $accessToken = null): ResponseInterface
     {
-        return $this->sendRequest($endpointUrl, [], HttpRequestMethod::GET, $accessToken);
+        return $this->sendRequest($endpointUrl, null, HttpRequestMethod::GET, $accessToken);
     }
 
     private function sendRequest(
         string $endpointUrl,
-        array $data,
+        ?array $data = null,
         HttpRequestMethod $httpRequestMethod,
         ?string $accessToken = null,
         array $customHeaders = []
     ): ResponseInterface
     {
-        $dataEncoded = json_encode($data);
+        $dataEncoded = $data ? json_encode($data) : null;
         if ($dataEncoded === false) {
             throw new \RuntimeException('Failed to encode data to JSON');
         }

@@ -3,6 +3,7 @@
 namespace Doomy\Restopus\tests;
 
 use Doomy\Restopus\Test\RestTestTrait;
+use Doomy\Testing\Assert\HttpResponseAssert;
 use PHPUnit\Framework\TestCase;
 
 final class RestPresenterTest extends TestCase
@@ -14,7 +15,7 @@ final class RestPresenterTest extends TestCase
     public function testList(): void
     {
         $response = $this->sendGet(self::API_URL . '/list');
-        self::assertSame(200, $response->getStatusCode());
+        HttpResponseAssert::assertResponseCode($response, 200);
         $this->assertEquals('{"data":[{"name":"name1","description":"description1"},{"name":"name2","description":"description2"}]}', $response->getBody()->getContents());
     }
 
