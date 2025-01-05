@@ -2,7 +2,7 @@
 
 namespace Doomy\Restopus\tests;
 
-use Doomy\Restopus\Response\Service\EntityViewReponseMapper;
+use Doomy\Restopus\Response\Service\EntityViewResponseMapper;
 use Doomy\Restopus\tests\Support\Presenter\TestRestPresenter;
 use Nette\Application\Responses\JsonResponse;
 use PHPUnit\Framework\Assert;
@@ -12,7 +12,7 @@ final class AbstractRestPresenterTest extends TestCase
 {
     public function testResponseEntities(): void
     {
-        $responseMapper = new EntityViewReponseMapper();
+        $responseMapper = new EntityViewResponseMapper();
         $presenter = new TestRestPresenter();
         $presenter->entityViewReponseMapper = $responseMapper;
         $response = $presenter->actionList();

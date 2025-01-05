@@ -7,7 +7,7 @@ use Doomy\Restopus\Request\AbstractRequestEntity;
 use Doomy\Restopus\Request\RequestBodyProvider;
 use Doomy\Restopus\Request\RequestValidator;
 use Doomy\Restopus\Response\AbstractResponseEntity;
-use Doomy\Restopus\Response\Service\EntityViewReponseMapper;
+use Doomy\Restopus\Response\Service\EntityViewResponseMapper;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use Doomy\Security\Exception\AuthenticationFailedException;
 use Nette\Application\IPresenter;
@@ -36,7 +36,7 @@ abstract class AbstractRestPresenter implements IPresenter
     public IResponse $httpResponse;
 
     #[Inject]
-    public EntityViewReponseMapper $entityViewReponseMapper;
+    public EntityViewResponseMapper $entityViewReponseMapper;
 
     public function run(Request $request): Response
     {
