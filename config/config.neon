@@ -9,7 +9,7 @@ services:
     )
     router:
         factory: @routerFactory::createRouter()
-    - Doomy\Restopus\Response\Service\EntityViewReponseMapper
+    - Doomy\Restopus\Response\Service\EntityViewResponseMapper
     - Doomy\Restopus\Request\RequestBodyProvider
     - Doomy\Restopus\Request\RequestValidator
     - Doomy\Restopus\Request\RequestMethodMapper

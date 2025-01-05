@@ -5,7 +5,7 @@ namespace Doomy\Restopus\Response\Service;
 use Doomy\Repository\Model\Entity;
 use Doomy\Restopus\Response\AbstractResponseEntity;
 
-final readonly class EntityViewReponseMapper
+final readonly class EntityViewResponseMapper
 {
     /**
      * @param class-string<AbstractResponseEntity> $viewClass
