@@ -27,4 +27,23 @@ final readonly class EntityViewResponseMapper
 
         return $data;
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function mapViewRoResponse(AbstractResponseEntity $view): array
+    {
+        $reflection = new \ReflectionClass($view);
+        $properties = $reflection->getProperties();
+
+        $data = [];
+        foreach ($properties as $property) {
+            if ($property->isPublic()) {
+                $propertyName = $property->getName();
+                $data[$propertyName] = $view->{$propertyName};
+            }
+        }
+
+        return $data;
+    }
 }
