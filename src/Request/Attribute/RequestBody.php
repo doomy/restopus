@@ -5,7 +5,7 @@ namespace Doomy\Restopus\Request\Attribute;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-final readonly class RequestBody
+final readonly class RequestBody extends AbstractRestMethodAttribute
 {
     /**
      * @param class-string $bodyEntityClass

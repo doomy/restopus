@@ -15,7 +15,7 @@ final class RestRouterFactoryTest extends TestCase
 
         $this->assertInstanceOf(\Nette\Application\Routers\RouteList::class, $router);
         $routers = $router->getRouters();
-        self::assertCount(3, $routers);
+        self::assertCount(4, $routers);
     }
 
     public function testNotExistingPresenter(): void

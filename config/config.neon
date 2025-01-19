@@ -14,3 +14,5 @@ services:
     - Doomy\Restopus\Request\Service\RequestValidator
     - Doomy\Restopus\Request\Service\RequestMethodMapper
     - Doomy\Security\Authenticator\DummyAuthenticator
+    - Doomy\Restopus\Request\Service\InPathParameterProvider
+    - Doomy\Restopus\Attribute\Service\AttributeProvider

@@ -6,7 +6,7 @@ use Attribute;
 use Doomy\Security\Model\User;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-final readonly class Authenticated
+final readonly class Authenticated extends AbstractRestMethodAttribute
 {
     /**
      * @template T of User
