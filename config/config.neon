@@ -10,7 +10,7 @@ services:
     router:
         factory: @routerFactory::createRouter()
     - Doomy\Restopus\Response\Service\EntityViewResponseMapper
-    - Doomy\Restopus\Request\RequestBodyProvider
-    - Doomy\Restopus\Request\RequestValidator
-    - Doomy\Restopus\Request\RequestMethodMapper
+    - Doomy\Restopus\Request\Service\RequestBodyProvider
+    - Doomy\Restopus\Request\Service\RequestValidator
+    - Doomy\Restopus\Request\Service\RequestMethodMapper
     - Doomy\Security\Authenticator\DummyAuthenticator
