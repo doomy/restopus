@@ -1,6 +1,8 @@
 <?php
 
-namespace Doomy\Restopus\Request;
+namespace Doomy\Restopus\Request\Service;
+
+use Doomy\Restopus\Request\AbstractRequestEntity;
 
 final class RequestBodyProvider
 {

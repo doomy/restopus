@@ -4,8 +4,8 @@ namespace Doomy\Restopus\Presenter;
 
 use Doomy\Repository\Model\Entity;
 use Doomy\Restopus\Request\AbstractRequestEntity;
-use Doomy\Restopus\Request\RequestBodyProvider;
-use Doomy\Restopus\Request\RequestValidator;
+use Doomy\Restopus\Request\Service\RequestBodyProvider;
+use Doomy\Restopus\Request\Service\RequestValidator;
 use Doomy\Restopus\Response\AbstractResponseEntity;
 use Doomy\Restopus\Response\Service\EntityViewResponseMapper;
 use Doomy\Restopus\Security\Exception\ForbiddenException;

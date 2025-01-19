@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doomy\Restopus\Routing;
 
 use Doomy\Restopus\Presenter\AbstractRestPresenter;
-use Doomy\Restopus\Request\RouteListMapper;
+use Doomy\Restopus\Request\Service\RouteListMapper;
 use Doomy\Restopus\Routing\Exception\RouteCreateException;
 use Nette\Application\Routers\RouteList;
 

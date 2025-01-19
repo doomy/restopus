@@ -3,7 +3,7 @@
 namespace Doomy\Restopus\tests;
 
 use _PHPStan_ab84e5579\Nette\Utils\DateTime;
-use Doomy\Restopus\Request\RequestBodyProvider;
+use Doomy\Restopus\Request\Service\RequestBodyProvider;
 use Doomy\Restopus\tests\Support\Request\TestRequestBody;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;

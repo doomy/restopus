@@ -1,6 +1,6 @@
 <?php
 
-namespace Doomy\Restopus\Request;
+namespace Doomy\Restopus\Request\Service;
 
 use Doomy\Restopus\Request\Attribute\Route;
 use Nette\Application\Routers\RouteList;
