@@ -4,6 +4,7 @@ namespace Doomy\Restopus\tests;
 
 use Doomy\Restopus\Test\RestTestTrait;
 use Doomy\Testing\Assert\HttpResponseAssert;
+use Doomy\Testing\Assert\JsonResponseAssert;
 use PHPUnit\Framework\TestCase;
 
 final class RestPresenterTest extends TestCase
@@ -22,7 +23,7 @@ final class RestPresenterTest extends TestCase
     public function testAuthenticatedInvalid(): void
     {
         $response = $this->sendGet(endpointUrl: self::API_URL . '/authenticated', accessToken: 'invalid');
-        self::assertSame(401, $response->getStatusCode());
+        HttpResponseAssert::assertResponseCode($response, 401);
     }
 
     public function testAuthenticatedExpired(): void
@@ -35,5 +36,10 @@ final class RestPresenterTest extends TestCase
     {
         $response = $this->sendGet(endpointUrl: self::API_URL . '/authenticated', accessToken: 'valid');
         self::assertSame(200, $response->getStatusCode());
+    }
+    public function testInPathParameter(): void
+    {
+        $response = $this->sendGet(self::API_URL . '/in-path/122');
+        JsonResponseAssert::assertJsonOkResponseWithData(['id' => 122], $response->getBody()->getContents());
     }
 }

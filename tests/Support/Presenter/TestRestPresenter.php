@@ -36,4 +36,11 @@ class TestRestPresenter extends \Doomy\Restopus\Presenter\AbstractRestPresenter
     {
     }
 
+    #[HttpMethod(HttpRequestMethod::GET)]
+    #[Route('/in-path/<id>')]
+    public function actionWithInPathParameters(array $params): Response
+    {
+        $id = $this->getPathParameter('id');
+        return new JsonResponse(['data' => ['id' => $id]]);
+    }
 }

@@ -2,9 +2,11 @@
 
 namespace Doomy\Restopus\Request\Service;
 
+use Doomy\Restopus\Request\Attribute\AbstractRestMethodAttribute;
 use Doomy\Restopus\Request\Attribute\Authenticated;
 use Doomy\Restopus\Request\Attribute\HttpMethod;
 use Doomy\Restopus\Request\Attribute\RequestBody;
+use Doomy\Restopus\Request\Attribute\Route;
 use Doomy\Restopus\Request\Enum\HttpRequestMethod;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use Doomy\Security\Authenticator\AuthenticatorInterface;
@@ -14,44 +16,48 @@ use Doomy\Security\Exception\TokenExpiredException;
 use Doomy\Security\Exception\UserBlockedException;
 use Doomy\Security\Exception\UserNotFoundException;
 use Nette\Application\Request;
+use Nette\Http\Request as HttpRequest;
 
 final readonly class RequestValidator
 {
     public function __construct(
-        private readonly RequestBodyProvider $requestBodyProvider,
-        private readonly RequestMethodMapper $requestMethodMapper,
-        private readonly AuthenticatorInterface $authenticator
+        private RequestBodyProvider $requestBodyProvider,
+        private RequestMethodMapper $requestMethodMapper,
+        private AuthenticatorInterface $authenticator,
+        private InPathParameterProvider $inPathParameterProvider,
+        private HttpRequest $httpRequest
     )
     {
     }
 
    /**
-    * @throws ForbiddenException
-    * @throws AuthenticationFailedException
     * @param array<string, string> $requestBody
     * @param array<string, int|string> $headers
+    * @param AbstractRestMethodAttribute[] $actionAttributes
+    * @throws AuthenticationFailedException
+    * @throws ForbiddenException
     */
    public function validateRequest(
        \ReflectionMethod $actionMethodReflection,
        Request $request,
        array|null $requestBody,
-       array $headers
+       array $headers,
+       array $actionAttributes
    ): void
     {
-        $annotations = $actionMethodReflection->getAttributes();
-
-        foreach ($annotations as $annotation) {
-            $anotationInstance = $annotation->newInstance();
-            if ($anotationInstance instanceof HttpMethod) {
-                $this->checkHttpMethodConsistency($anotationInstance->getHttpRequestMethod(), $request);
-            } elseif ($anotationInstance instanceof RequestBody) {
+        foreach ($actionAttributes as $attribute) {
+            if ($attribute instanceof HttpMethod) {
+                $this->checkHttpMethodConsistency($attribute->getHttpRequestMethod(), $request);
+            } elseif ($attribute instanceof RequestBody) {
                 /** performs validation while creating object */
                 if (! is_array($requestBody)) {
                     throw new ForbiddenException('Body cannot be empty');
                 }
-                $this->requestBodyProvider->getBodyEntity($requestBody, $anotationInstance->getBodyEntityClass());
-            } elseif ($anotationInstance instanceof Authenticated) {
-                $this->authenticateRequest($headers, $anotationInstance);
+                $this->requestBodyProvider->getBodyEntity($requestBody, $attribute->getBodyEntityClass());
+            } elseif ($attribute instanceof Authenticated) {
+                $this->authenticateRequest($headers, $attribute);
+            } elseif ($attribute instanceof Route) {
+                $this->validateRoute($attribute, $this->httpRequest->getUrl());
             }
         }
     }
@@ -109,6 +115,33 @@ final readonly class RequestValidator
         }
         catch (UserNotFoundException|UserBlockedException $exception) {
             throw new ForbiddenException();
+        }
+    }
+
+    /**
+     * @throws ForbiddenException
+     */
+    private function validateRoute(Route $route, string $requestUrl): void
+    {
+        $parameterNames = $this->inPathParameterProvider->getRouteParameterNames($route);
+        if (count($parameterNames) === 0) {
+            return;
+        }
+
+        $this->validateInPathParameters($parameterNames, $route, $requestUrl);
+    }
+
+    /**
+     * @param array<string> $parameterNames
+     * @throws ForbiddenException
+     */
+    private function validateInPathParameters(array $parameterNames, Route $route, string $requestUrl): void
+    {
+        $pathParameters = $this->inPathParameterProvider->extractPathParameters($parameterNames, $requestUrl, $route);
+        foreach ($pathParameters as $parameterName => $parameterValue) {
+            if ($parameterValue === null) {
+                throw new ForbiddenException('Missing path parameter ' . $parameterName);
+            }
         }
     }
 }

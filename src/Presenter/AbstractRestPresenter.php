@@ -3,13 +3,16 @@
 namespace Doomy\Restopus\Presenter;
 
 use Doomy\Repository\Model\Entity;
+use Doomy\Restopus\Attribute\Service\AttributeProvider;
 use Doomy\Restopus\Request\AbstractRequestEntity;
+use Doomy\Restopus\Request\Service\InPathParameterProvider;
 use Doomy\Restopus\Request\Service\RequestBodyProvider;
 use Doomy\Restopus\Request\Service\RequestValidator;
 use Doomy\Restopus\Response\AbstractResponseEntity;
 use Doomy\Restopus\Response\Service\EntityViewResponseMapper;
 use Doomy\Restopus\Security\Exception\ForbiddenException;
 use Doomy\Security\Exception\AuthenticationFailedException;
+use http\Exception\RuntimeException;
 use Nette\Application\IPresenter;
 use Nette\Application\Request;
 use Nette\Application\Response;
@@ -18,9 +21,13 @@ use Nette\DI\Attributes\Inject;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Http\IResponse;
 use ReflectionMethod;
-
 abstract class AbstractRestPresenter implements IPresenter
 {
+    /**
+     * @var ReflectionMethod[]
+     */
+    private array $actionReflectionCache = [];
+
     final const string PARAM_ACTION = 'action';
 
     #[Inject]
@@ -38,22 +45,29 @@ abstract class AbstractRestPresenter implements IPresenter
     #[Inject]
     public EntityViewResponseMapper $entityViewReponseMapper;
 
+    #[Inject]
+    public InPathParameterProvider $inPathParameterProvider;
+
+    #[Inject]
+    public AttributeProvider $attributeProvider;
+
+    private Request $request;
+
     public function run(Request $request): Response
     {
+        $this->request = $request;
+
         try {
             $bodyDecoded = $this->requestValidator->decodeBody($this->httpRequest->getRawBody());
 
-            $action = $request->getParameter(self::PARAM_ACTION);
-            if (! is_string($action)) {
-                throw new ForbiddenException();
-            }
-            $methodReflection = $this->getMethodReflection($action);
+            $methodReflection = $this->getActionMethodReflection();
 
             $this->requestValidator->validateRequest(
                 actionMethodReflection: $methodReflection,
                 request: $request,
                 requestBody: $bodyDecoded,
-                headers: $this->httpRequest->getHeaders()
+                headers: $this->httpRequest->getHeaders(),
+                actionAttributes: $this->attributeProvider->getMethodAttributes($methodReflection),
             );
 
             $response = $methodReflection->invoke($this, $bodyDecoded ?? []);
@@ -119,9 +133,30 @@ abstract class AbstractRestPresenter implements IPresenter
         return $this->entityViewReponseMapper->mapEntityToResponse($entity, $viewClass);
     }
 
-    private function getMethodReflection(string $action): ReflectionMethod
+    protected function getPathParameter(string $parameterName): string
     {
+        $actionMethodReflection = $this->getActionMethodReflection();
+        $route = $this->attributeProvider->getRoute($actionMethodReflection);
+
+        return $this->inPathParameterProvider->getPathParameter(
+            $parameterName,
+            $this->httpRequest->getUrl(),
+            $route
+        ) ?? throw new RuntimeException('Parameter not found');
+    }
+
+    private function getActionMethodReflection(): ReflectionMethod
+    {
+        $action = $this->request->getParameter(self::PARAM_ACTION);
+        if (! is_string($action)) {
+            throw new ForbiddenException();
+        }
+
+        if (isset($this->actionReflectionCache[$action])) {
+            return $this->actionReflectionCache[$action];
+        }
+
         $actionMethodName = 'action' . ucfirst($action);
-        return new ReflectionMethod($this, $actionMethodName);
+        return $this->actionReflectionCache[$action] = new ReflectionMethod($this, $actionMethodName);
     }
 }
