@@ -7,6 +7,17 @@ works with Nette presenters & routing
 composer require doomy/restopus
 ```
 
+in your NEON configuration (`config.neon` / `common.neon`):
+```neon
+services:
+    routerFactory: Doomy\Restopus\Routing\RestRouterFactory(
+        restPresenterNamespace: <Your\Presenter\Namespace>,
+        presentersDir: %rootDir%/src/Presenter
+    )
+    router:
+        factory: @routerFactory::createRouter()
+```
+
 ## Example
 
 ```php
