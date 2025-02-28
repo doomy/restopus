@@ -45,3 +45,28 @@ final class EventPresenter extends AbstractRestPresenter
         return new VoidResponse();
     }
 ```
+
+example in tests:
+```php
+final class EventCreateTest extends TestCase
+{
+    use RestTestTrait;
+   
+    private const ENDPOINT_URL = '<YOUR-TEST-SERVER>/events/create';
+    public function testEventCreateNotLoggedIn(): void
+    {
+        $response = $this->sendPost(self::ENDPONT_URL, []);
+        Assert::assertSame(403, $response->getStatusCode());
+    }
+
+    public function testEventCreateLoggedIn(): void
+    {
+        $start = new \DateTimeImmutable();
+        $end = (new \DateTimeImmutable())->modify('+1 day');
+
+        $response = $this->sendPost(self::ENDPOINT_URL, [
+            'title' => 'Event name',
+            'description' => 'Event description',
+        ], '<ACCESS_TOKEN>');
+        HttpResponseAssert::assertResponseCode($response, 201);
+```
