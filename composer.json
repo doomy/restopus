@@ -17,7 +17,8 @@
 		"doomy/ormtopus": "^5.1",
 		"doomy/repository": "^8",
 		"nette/bootstrap": "^3.2",
-		"nette/security": "^v3.2.1"
+		"nette/security": "^v3.2.1",
+		"nette/schema": "^1.3"
 	},
 	"require-dev": {
 		"symplify/easy-coding-standard": "^12.3",

@@ -1,18 +1,16 @@
+extensions:
+    restopus: Doomy\Restopus\DI\RestopusExtension
+
+restopus:
+    presenterNamespace: Doomy\Restopus\tests\Support\Presenter
+    presentersDir: %rootDir%/tests/Support/Presenter
+
 application:
     mapping:
         *: Doomy\Restopus\tests\Support\Presenter\*Presenter
 
 services:
-    routerFactory: Doomy\Restopus\Routing\RestRouterFactory(
-        restPresenterNamespace: Doomy\Restopus\tests\Support\Presenter,
-        presentersDir: %rootDir%/tests/Support/Presenter
-    )
-    router:
-        factory: @routerFactory::createRouter()
-    - Doomy\Restopus\Response\Service\EntityViewResponseMapper
-    - Doomy\Restopus\Request\Service\RequestBodyProvider
-    - Doomy\Restopus\Request\Service\RequestValidator
-    - Doomy\Restopus\Request\Service\RequestMethodMapper
+    # The authenticator is an application concern, so Restopus does not register one.
+    # DummyAuthenticator accepts any access token and exists for this test suite only;
+    # a real application registers its own AuthenticatorInterface implementation here.
     - Doomy\Security\Authenticator\DummyAuthenticator
-    - Doomy\Restopus\Request\Service\InPathParameterProvider
-    - Doomy\Restopus\Attribute\Service\AttributeProvider
